@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="relative overflow-hidden bg-cream pt-16 pb-32">
+    <!-- Background decorative blobs -->
+    <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-crimson-100 opacity-50 blur-3xl z-0">
+    </div>
+    <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-red-200 opacity-40 blur-3xl z-0"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="flex flex-col lg:flex-row items-center justify-between gap-12">
+
+            <!-- Text Content -->
+            <div class="lg:w-1/2 text-center lg:text-left">
+                <div
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-100 text-crimson-700 text-sm font-semibold mb-6 shadow-sm border border-red-200">
+                    <span class="w-2 h-2 rounded-full bg-crimson-600 animate-pulse"></span>
+                    Urgent Need for O- Blood
+                </div>
+
+                <h1 class="text-5xl md:text-6xl lg:text-7xl font-serif text-ink mb-6 leading-tight">
+                    Save <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-crimson-600 to-red-400">Lives</span><br>
+                    Share Hope.
+                </h1>
+
+                <p class="text-lg md:text-xl text-gray-600 mb-10 max-w-2xl mx-auto lg:mx-0 font-sans">
+                    Join LifeFlow's network of heroes. Whether you're registering to donate or requesting life-saving
+                    blood, every connection matters.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                    <a href="{{ url_for('register_donor') }}"
+                        class="inline-flex justify-center items-center px-8 py-4 border border-transparent text-lg font-medium rounded-full shadow-lg text-white bg-crimson-700 hover:bg-crimson-800 hover:-translate-y-1 transition-all duration-300">
+                        Register as Donor
+                    </a>
+                    <a href="{{ url_for('request_blood') }}"
+                        class="inline-flex justify-center items-center px-8 py-4 border border-gray-300 text-lg font-medium rounded-full shadow-sm text-gray-700 bg-white hover:bg-gray-50 hover:text-crimson-700 hover:-translate-y-1 transition-all duration-300">
+                        Request Blood
+                    </a>
+                </div>
+            </div>
+
+            <!-- Visual Component: Animated Blood Bag/Drop in Glass Container -->
+            <div class="lg:w-1/2 w-full max-w-md mx-auto relative mt-12 lg:mt-0">
+                <div
+                    class="relative w-full aspect-square rounded-[3rem] glass shadow-2xl overflow-hidden border border-white/40 flex items-center justify-center bg-gradient-to-br from-white/60 to-white/20">
+                    <!-- Blood Drop Animation -->
+                    <div class="relative animate-float z-10">
+                        <svg width="200" height="280" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            class="text-crimson-600 filter drop-shadow-xl">
+                            <path
+                                d="M12 2C12 2 4 10.74 4 15.5C4 19.64 7.58 23 12 23C16.42 23 20 19.64 20 15.5C20 10.74 12 2 12 2Z"
+                                fill="url(#blood-gradient)" stroke="currentColor" stroke-width="0.5" />
+                            <defs>
+                                <linearGradient id="blood-gradient" x1="12" y1="2" x2="12" y2="23"
+                                    gradientUnits="userSpaceOnUse">
+                                    <stop offset="0%" stop-color="#ef4444" />
+                                    <stop offset="50%" stop-color="#dc2626" />
+                                    <stop offset="100%" stop-color="#991b1b" />
+                                </linearGradient>
+                            </defs>
+                            <!-- Highlight -->
+                            <path d="M9 12C9 12 7 14 7 16" stroke="white" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="opacity-40" />
+                        </svg>
+
+                        <!-- Mini floating elements ->
+                        <div class="absolute top-1/4 -right-4 w-4 h-4 rounded-full bg-red-400 opacity-60 animate-bounce delay-100"></div>
+                        <div class="absolute bottom-1/4 -left-6 w-6 h-6 rounded-full bg-crimson-300 opacity-40 animate-pulse delay-300"></div>
+                        -->
+                    </div>
+
+                    <!-- Circular decorators -->
+                    <div class="absolute w-[120%] h-[120%] border-[40px] border-red-50 rounded-full opacity-30"></div>
+                    <div class="absolute w-[90%] h-[90%] border-2 border-dashed border-red-200 rounded-full animate-spin"
+                        style="animation-duration: 40s;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="relative z-20 -mt-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-24">
+    <div
+        class="glass rounded-3xl shadow-xl overflow-hidden border border-white p-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-gray-200">
+        <div class="pt-4 md:pt-0">
+            <p class="text-5xl font-serif text-crimson-700 mb-2">{{ stats.donors }}+</p>
+            <p class="text-gray-600 font-medium uppercase tracking-wider text-sm">Registered Donors</p>
+        </div>
+        <div class="pt-8 md:pt-0">
+            <p class="text-5xl font-serif text-crimson-700 mb-2">{{ stats.lives_saved }}+</p>
+            <p class="text-gray-600 font-medium uppercase tracking-wider text-sm">Lives Impacted</p>
+        </div>
+        <div class="pt-8 md:pt-0">
+            <p class="text-5xl font-serif text-crimson-700 mb-2">{{ stats.cities_covered }}</p>
+            <p class="text-gray-600 font-medium uppercase tracking-wider text-sm">Cities Covered</p>
+        </div>
+    </div>
+</div>
+
+<!-- Emergency Banner Module -->
+{% if emergency_requests %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-24">
+    <div class="flex items-center gap-3 mb-6">
+        <div class="relative flex h-4 w-4">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-4 w-4 bg-red-600"></span>
+        </div>
+        <h2 class="text-3xl font-serif text-ink">Live Emergency Requests</h2>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {% for req in emergency_requests %}
+        <div
+            class="bg-white rounded-2xl shadow-md p-6 border-t-4 border-red-600 hover:shadow-lg transition-shadow relative overflow-hidden group">
+            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor" class="text-red-600">
+                    <path
+                        d="M12,2L4,5V11.11C4,16.14 7.42,20.72 12,22C16.58,20.72 20,16.14 20,11.11V5L12,2M11,15H13V17H11V15M11,7H13V13H11V7Z" />
+                </svg>
+            </div>
+
+            <div class="flex justify-between items-start mb-4">
+                <div
+                    class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-700 font-bold text-xl border-2 border-white shadow-sm ring-2 ring-red-50">
+                    {{ req.blood_type }}
+                </div>
+                <span
+                    class="px-3 py-1 bg-red-100 text-red-800 text-xs font-bold uppercase tracking-wider rounded-full animate-pulse-fast">CRITICAL</span>
+            </div>
+
+            <h3 class="font-bold text-lg mb-1">{{ req.hospital }}</h3>
+            <p class="text-gray-600 text-sm mb-4 flex items-center gap-1">
+                <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {{ req.city }}
+            </p>
+
+            <div class="pt-4 border-t border-gray-100 flex justify-between items-center">
+                <div class="text-sm">
+                    <span class="text-gray-500 block">Required</span>
+                    <span class="font-semibold text-ink">{{ req.units }} Units</span>
+                </div>
+                <a href="{{ url_for('find_donors', blood_group=req.blood_type, city=req.city) }}"
+                    class="text-crimson-600 hover:text-crimson-800 text-sm font-semibold flex items-center gap-1">
+                    Find Donors <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Compatibility Chart Module -->
+<div class="bg-white py-24 border-y border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
+        <h2 class="text-4xl font-serif text-ink mb-4">Blood Compatibility</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">Knowing your blood type compatibility can help save the right life at
+            the right time. O- is the universal donor, AB+ is the universal recipient.</p>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 overflow-x-auto pb-8">
+        <table class="w-full text-center border-collapse">
+            <thead>
+                <tr>
+                    <th class="p-4 border-b-2 border-crimson-200 text-ink bg-red-50 rounded-tl-xl text-left pl-6">Blood
+                        Type</th>
+                    <th class="p-4 border-b-2 border-crimson-200 text-gray-600 bg-red-50/50">Can Donate To</th>
+                    <th class="p-4 border-b-2 border-crimson-200 text-gray-600 bg-red-50/50 rounded-tr-xl">Can Receive
+                        From</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-sm md:text-base">
+                <tr class="hover:bg-red-50/30 transition-colors">
+                    <td class="p-4 py-5 font-bold text-left pl-6 text-crimson-700"><span
+                            class="inline-block w-10 text-center mr-2 py-1 bg-red-100 rounded">O-</span></td>
+                    <td class="p-4 py-5 text-gray-700">Everyone (Universal Donor)</td>
+                    <td class="p-4 py-5 text-gray-700">O- only</td>
+                </tr>
+                <tr class="hover:bg-red-50/30 transition-colors">
+                    <td class="p-4 py-5 font-bold text-left pl-6 text-crimson-700"><span
+                            class="inline-block w-10 text-center mr-2 py-1 bg-red-100 rounded">O+</span></td>
+                    <td class="p-4 py-5 text-gray-700">O+, A+, B+, AB+</td>
+                    <td class="p-4 py-5 text-gray-700">O+, O-</td>
+                </tr>
+                <tr class="hover:bg-red-50/30 transition-colors">
+                    <td class="p-4 py-5 font-bold text-left pl-6 text-crimson-700"><span
+                            class="inline-block w-10 text-center mr-2 py-1 bg-red-100 rounded">A-</span></td>
+                    <td class="p-4 py-5 text-gray-700">A+, A-, AB+, AB-</td>
+                    <td class="p-4 py-5 text-gray-700">A-, O-</td>
+                </tr>
+                <tr class="hover:bg-red-50/30 transition-colors bg-red-50/20">
+                    <td class="p-4 py-5 text-left pl-6 text-gray-500 font-medium" colspan="3">... and others. <a
+                            href="{{ url_for('register_donor') }}" class="text-crimson-600 hover:underline">Register to
+                            learn more.</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

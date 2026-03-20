@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LifeFlow - Blood Donation Network{% endblock %}</title>
+    
+    <!-- Fonts: DM Serif Display & DM Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN for single-file/simple setup) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        crimson: {
+                            50: '#fef2f2',
+                            100: '#fee2e2',
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            700: '#C0152A', /* Deep Crimson Base */
+                            800: '#991b1b',
+                            900: '#7f1d1d',
+                        },
+                        cream: '#FDF8F5',
+                        ink: '#1e293b'
+                    },
+                    fontFamily: {
+                        sans: ['"DM Sans"', 'sans-serif'],
+                        serif: ['"DM Serif Display"', 'serif'],
+                    },
+                    animation: {
+                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Base styles */
+        body {
+            background-color: #FDF8F5; /* Cream */
+            color: #1e293b; /* Ink */
+        }
+        h1, h2, h3, h4, .font-serif {
+            font-family: 'DM Serif Display', serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FDF8F5; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C0152A; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #991b1b; 
+        }
+        /* Glassmorphism utility */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans antialiased text-ink">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 glass shadow-sm border-b border-red-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 transition-all duration-300">
+                <div class="flex items-center">
+                    <a href="{{ url_for('index') }}" class="flex-shrink-0 flex items-center gap-2 group">
+                        <svg class="h-8 w-8 text-crimson-700 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.28 2,8.5C2,5.42 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.09C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.42 22,8.5C22,12.28 18.6,15.36 13.45,20.04L12,21.35Z" />
+                        </svg>
+                        <span class="font-serif text-2xl font-bold text-crimson-700">LifeFlow</span>
+                    </a>
+                </div>
+                <!-- Desktop Menu -->
+                <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-8">
+                    <a href="{{ url_for('index') }}" class="text-gray-700 hover:text-crimson-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                    <a href="{{ url_for('find_donors') }}" class="text-gray-700 hover:text-crimson-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Find Donors</a>
+                    <a href="{{ url_for('request_blood') }}" class="text-gray-700 hover:text-crimson-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Request Blood</a>
+                    
+                    {% if session.get('user_id') %}
+                        <a href="{{ url_for('dashboard') }}" class="text-gray-700 hover:text-crimson-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Dashboard</a>
+                        <form action="{{ url_for('logout') }}" method="POST" class="inline">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="bg-gray-200 text-gray-800 hover:bg-gray-300 px-4 py-2 rounded-full text-sm font-medium transition-colors">Logout</button>
+                        </form>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="text-gray-700 hover:text-crimson-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Login</a>
+                        <a href="{{ url_for('register_donor') }}" class="bg-crimson-700 text-white hover:bg-crimson-800 px-4 py-2 rounded-full text-sm font-medium transition-colors shadow-md hover:shadow-lg">Register as Donor</a>
+                    {% endif %}
+                </div>
+                <!-- Mobile menu button -->
+                <div class="-mr-2 flex items-center sm:hidden">
+                    <button type="button" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-crimson-500" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="sm:hidden hidden bg-white border-t border-gray-200" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="{{ url_for('index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Home</a>
+                <a href="{{ url_for('find_donors') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Find Donors</a>
+                <a href="{{ url_for('request_blood') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Request Blood</a>
+                
+                {% if session.get('user_id') %}
+                    <a href="{{ url_for('dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Dashboard</a>
+                    <form action="{{ url_for('logout') }}" method="POST" class="w-full text-left">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Login</a>
+                    <a href="{{ url_for('register_donor') }}" class="block px-3 py-2 rounded-md text-base font-medium text-crimson-700 hover:text-crimson-800 hover:bg-red-50">Register as Donor</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {% set alert_color = 'bg-red-100 text-red-800 border-red-200' if category in ['error', 'danger'] else 'bg-green-100 text-green-800 border-green-200' if category == 'success' else 'bg-yellow-100 text-yellow-800 border-yellow-200' %}
+                    <div class="rounded-md p-4 mb-4 border {{ alert_color }} flex items-center justify-between" role="alert">
+                        <div class="flex items-center">
+                            {% if category == 'success' %}
+                                <svg class="h-5 w-5 mr-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            {% elif category in ['error', 'danger'] %}
+                                <svg class="h-5 w-5 mr-3 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            {% else %}
+                                <svg class="h-5 w-5 mr-3 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            {% endif %}
+                            <p class="text-sm font-medium">{{ message }}</p>
+                        </div>
+                        <button onclick="this.parentElement.remove()" class="text-gray-500 hover:text-gray-900 focus:outline-none">
+                            <span class="sr-only">Dismiss</span>
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- UI Session Timeout Warning (Client-side logic simulation) -->
+        {% if session.get('user_id') %}
+            <div id="session-warning" class="hidden rounded-md p-4 mb-4 border bg-yellow-100 text-yellow-800 border-yellow-200 flex items-center justify-between">
+                <div class="flex items-center">
+                    <svg class="h-5 w-5 mr-3 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="text-sm font-medium">Your session will expire soon due to inactivity. <a href="#" onclick="window.location.reload();" class="underline">Refresh</a> to keep session alive.</p>
+                </div>
+            </div>
+            <script>
+                // 10 minutes timeout warning at 9 minutes (540000ms)
+                setTimeout(() => {
+                    document.getElementById('session-warning').classList.remove('hidden');
+                }, 540000);
+            </script>
+        {% endif %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow w-full">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-ink text-white py-12 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="md:col-span-1">
+                <a href="{{ url_for('index') }}" class="flex items-center gap-2 mb-4">
+                    <svg class="h-6 w-6 text-crimson-500" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.28 2,8.5C2,5.42 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.09C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.42 22,8.5C22,12.28 18.6,15.36 13.45,20.04L12,21.35Z" />
+                    </svg>
+                    <span class="font-serif text-xl font-bold text-white">LifeFlow</span>
+                </a>
+                <p class="text-gray-400 text-sm">Connecting blood donors with those in critical need. Every drop counts.</p>
+            </div>
+            
+            <div>
+                <h3 class="text-lg font-bold mb-4 font-serif">Quick Links</h3>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li><a href="{{ url_for('find_donors') }}" class="hover:text-crimson-400 transition-colors">Find Donors</a></li>
+                    <li><a href="{{ url_for('request_blood') }}" class="hover:text-crimson-400 transition-colors">Request Blood</a></li>
+                    <li><a href="{{ url_for('register_donor') }}" class="hover:text-crimson-400 transition-colors">Register as Donor</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3 class="text-lg font-bold mb-4 font-serif">Support</h3>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li><a href="#" class="hover:text-crimson-400 transition-colors">FAQ</a></li>
+                    <li><a href="#" class="hover:text-crimson-400 transition-colors">Contact Us</a></li>
+                    <li><a href="#" class="hover:text-crimson-400 transition-colors">Donation Guidelines</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3 class="text-lg font-bold mb-4 font-serif">Legal</h3>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li><a href="#" class="hover:text-crimson-400 transition-colors">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-crimson-400 transition-colors">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
+            &copy; {{ range(2024, 2030) | random }} LifeFlow Network. All rights reserved.
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

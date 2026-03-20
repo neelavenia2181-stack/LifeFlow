@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-[80vh] flex flex-col md:flex-row py-12 px-4 sm:px-6 lg:px-8 bg-cream gap-12 max-w-7xl mx-auto">
+
+    <!-- Info Section -->
+    <div class="md:w-5/12 pt-8">
+        <h1 class="text-4xl md:text-5xl font-serif text-ink mb-6">
+            Need <span class="text-crimson-600">Blood?</span>
+        </h1>
+        <p class="text-lg text-gray-600 mb-8 font-sans">
+            Fill out the form to instantly alert donors in your area. Based on urgency, notifications will be
+            prioritized across our network.
+        </p>
+
+        <div class="space-y-6">
+            <div
+                class="glass p-5 rounded-2xl border-l-4 border-green-500 flex gap-4 items-start shadow-sm hover:shadow-md transition-shadow">
+                <div
+                    class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-ink">Urgency: Normal</h3>
+                    <p class="text-sm text-gray-600 mt-1">For scheduled surgeries or non-immediate requirements.
+                        Standard network broadcast.</p>
+                </div>
+            </div>
+
+            <div
+                class="glass p-5 rounded-2xl border-l-4 border-yellow-500 flex gap-4 items-start shadow-sm hover:shadow-md transition-shadow">
+                <div
+                    class="w-10 h-10 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-ink">Urgency: Urgent</h3>
+                    <p class="text-sm text-gray-600 mt-1">Needed within 12-24 hours. Triggers priority alerts to
+                        matching donors nearby.</p>
+                </div>
+            </div>
+
+            <div
+                class="glass p-5 rounded-2xl border-l-4 border-red-600 flex gap-4 items-start shadow-sm shadow-red-100 hover:shadow-md transition-shadow">
+                <div
+                    class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0 animate-pulse-fast">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-red-700">Urgency: Critical</h3>
+                    <p class="text-sm text-gray-600 mt-1">Life-threatening emergency. Required immediately. Appears on
+                        the network homepage banner instantly.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Section -->
+    <div class="md:w-7/12">
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 sm:p-10 relative overflow-hidden">
+            <!-- Decorative background gradient -->
+            <div
+                class="absolute top-0 right-0 w-64 h-64 bg-red-50 rounded-full mix-blend-multiply filter blur-3xl opacity-50 -mr-20 -mt-20">
+            </div>
+
+            <form action="{{ url_for('request_blood') }}" method="POST" class="space-y-6 relative z-10" id="requestForm"
+                novalidate>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="col-span-1 md:col-span-2 space-y-2">
+                        <label for="patient_name" class="block text-sm font-medium text-gray-700">Patient Full Name
+                            *</label>
+                        <input id="patient_name" name="patient_name" type="text" required
+                            class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 transition-colors bg-gray-50 focus:bg-white"
+                            placeholder="Patient's Name">
+                        <p class="error-msg text-red-500 text-xs mt-1 hidden" id="err-patient">Patient name is required
+                        </p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="blood_type" class="block text-sm font-medium text-gray-700">Blood Type Needed
+                            *</label>
+                        <select id="blood_type" name="blood_type" required
+                            class="block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 transition-colors bg-gray-50 focus:bg-white text-crimson-700 font-bold">
+                            <option value="" disabled selected>Select Blood Group</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                        <p class="error-msg text-red-500 text-xs mt-1 hidden" id="err-blood">Blood type is required</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="units" class="block text-sm font-medium text-gray-700">Units Required *</label>
+                        <input id="units" name="units" type="number" min="1" max="20" required
+                            class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 transition-colors bg-gray-50 focus:bg-white">
+                        <p class="error-msg text-red-500 text-xs mt-1 hidden" id="err-units">Valid number of units
+                            required</p>
+                    </div>
+
+                    <div class="col-span-1 md:col-span-2 space-y-2">
+                        <label for="hospital" class="block text-sm font-medium text-gray-700">Hospital Name & Branch
+                            *</label>
+                        <input id="hospital" name="hospital" type="text" required
+                            class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 transition-colors bg-gray-50 focus:bg-white"
+                            placeholder="Apollo Hospital, Main Branch">
+                        <p class="error-msg text-red-500 text-xs mt-1 hidden" id="err-hospital">Hospital name is
+                            required</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="city" class="block text-sm font-medium text-gray-700">City *</label>
+                        <input id="city" name="city" type="text" required
+                            class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 transition-colors bg-gray-50 focus:bg-white"
+                            placeholder="Delhi">
+                        <p class="error-msg text-red-500 text-xs mt-1 hidden" id="err-city">City is required</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="contact" class="block text-sm font-medium text-gray-700">Contact Number (Requester)
+                            *</label>
+                        <input id="contact" name="contact" type="tel" pattern="[0-9]{10}" required
+                            class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 transition-colors bg-gray-50 focus:bg-white"
+                            placeholder="10 digit number">
+                        <p class="error-msg text-red-500 text-xs mt-1 hidden" id="err-contact">Valid 10-digit number
+                            required</p>
+                    </div>
+
+                    <div class="col-span-1 md:col-span-2 space-y-3 mt-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Urgency Level *</label>
+                        <!-- Custom Radio Buttons for Urgency -->
+                        <div class="grid grid-cols-3 gap-3">
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="urgency" value="normal" class="peer sr-only" required>
+                                <div
+                                    class="w-full p-4 rounded-xl border-2 border-gray-200 peer-checked:border-green-500 peer-checked:bg-green-50 hover:bg-gray-50 transition-all text-center">
+                                    <div class="font-bold text-gray-700 peer-checked:text-green-700">Normal</div>
+                                </div>
+                            </label>
+
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="urgency" value="urgent" class="peer sr-only">
+                                <div
+                                    class="w-full p-4 rounded-xl border-2 border-gray-200 peer-checked:border-yellow-500 peer-checked:bg-yellow-50 hover:bg-gray-50 transition-all text-center">
+                                    <div class="font-bold text-gray-700 peer-checked:text-yellow-700">Urgent</div>
+                                </div>
+                            </label>
+
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="urgency" value="critical" class="peer sr-only">
+                                <div
+                                    class="w-full p-4 rounded-xl border-2 border-gray-200 peer-checked:border-red-600 peer-checked:bg-red-50 hover:bg-gray-50 transition-all text-center">
+                                    <div class="font-bold text-gray-700 peer-checked:text-red-700 animate-pulse">
+                                        Critical</div>
+                                </div>
+                            </label>
+                        </div>
+                        <p class="error-msg text-red-500 text-xs mt-1 hidden" id="err-urgency">Please select an urgency
+                            level</p>
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit"
+                        class="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-md text-lg font-bold text-white bg-crimson-700 hover:bg-crimson-800 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                        Broadcast Blood Request
+                    </button>
+                    <p class="text-xs text-center text-gray-500 mt-4">By submitting, you confirm that this is a genuine
+                        medical requirement.</p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('requestForm').addEventListener('submit', function (e) {
+        let isValid = true;
+        document.querySelectorAll('.error-msg').forEach(el => el.classList.add('hidden'));
+
+        if (!document.getElementById('patient_name').value.trim()) { isValid = false; document.getElementById('err-patient').classList.remove('hidden'); }
+        if (!document.getElementById('blood_type').value) { isValid = false; document.getElementById('err-blood').classList.remove('hidden'); }
+
+        const units = parseInt(document.getElementById('units').value);
+        if (!units || units < 1) { isValid = false; document.getElementById('err-units').classList.remove('hidden'); }
+
+        if (!document.getElementById('hospital').value.trim()) { isValid = false; document.getElementById('err-hospital').classList.remove('hidden'); }
+        if (!document.getElementById('city').value.trim()) { isValid = false; document.getElementById('err-city').classList.remove('hidden'); }
+
+        const contact = document.getElementById('contact').value;
+        if (!/^\d{10}$/.test(contact)) { isValid = false; document.getElementById('err-contact').classList.remove('hidden'); }
+
+        const urgency = document.querySelector('input[name="urgency"]:checked');
+        if (!urgency) { isValid = false; document.getElementById('err-urgency').classList.remove('hidden'); }
+
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+
+    // Add color logic to form on submit or radio change to preview
+    document.querySelectorAll('input[name="urgency"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            const submitBtn = document.querySelector('button[type="submit"]');
+
+            // reset
+            submitBtn.className = "w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-md text-lg font-bold text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 ";
+
+            if (this.value === 'critical') {
+                submitBtn.className += "bg-red-600 hover:bg-red-700 animate-pulse";
+                submitBtn.innerText = "🚨 BROADCAST CRITICAL REQUEST";
+            } else if (this.value === 'urgent') {
+                submitBtn.className += "bg-yellow-600 hover:bg-yellow-700";
+                submitBtn.innerText = "Broadcast Urgent Request";
+            } else {
+                submitBtn.className += "bg-crimson-700 hover:bg-crimson-800";
+                submitBtn.innerText = "Broadcast Blood Request";
+            }
+        });
+    });
+</script>
+{% endblock %}

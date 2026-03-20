@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div
+    class="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-cream to-red-50">
+    <div class="max-w-2xl w-full space-y-8 glass p-8 sm:p-12 rounded-3xl shadow-2xl border border-white">
+
+        <div>
+            <h2 class="mt-2 text-center text-4xl font-serif text-ink">
+                Become a <span class="text-crimson-600">Donor</span>
+            </h2>
+            <p class="mt-4 text-center text-gray-600 text-sm">
+                Join our network to save lives. It only takes a few minutes to register.
+            </p>
+        </div>
+
+        <form class="mt-8 space-y-6" action="{{ url_for('register_donor') }}" method="POST" id="registerForm"
+            novalidate>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Personal Info -->
+                <div class="col-span-1 md:col-span-2 space-y-2">
+                    <label for="name" class="block text-sm font-medium text-gray-700">Full Name *</label>
+                    <input id="name" name="name" type="text" required
+                        class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 focus:bg-white transition-colors bg-white/50"
+                        placeholder="John Doe">
+                    <p class="error-msg text-red-500 text-xs mt-1 hidden" id="nameError">Name is required</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="age" class="block text-sm font-medium text-gray-700">Age * (18-65)</label>
+                    <input id="age" name="age" type="number" min="18" max="65" required
+                        class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 focus:bg-white transition-colors bg-white/50">
+                    <p class="error-msg text-red-500 text-xs mt-1 hidden" id="ageError">Valid age is required (18-65)
+                    </p>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="gender" class="block text-sm font-medium text-gray-700">Gender *</label>
+                    <select id="gender" name="gender" required
+                        class="block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 focus:bg-white transition-colors bg-white/50">
+                        <option value="" disabled selected>Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                        <option value="Prefer not to say">Prefer not to say</option>
+                    </select>
+                </div>
+
+                <!-- Medical Info -->
+                <div class="space-y-2">
+                    <label for="blood_type" class="block text-sm font-medium text-gray-700">Blood Type *</label>
+                    <select id="blood_type" name="blood_type" required
+                        class="block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 focus:bg-white transition-colors bg-white/50 text-crimson-700 font-bold">
+                        <option value="" disabled selected>Select Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="last_donation" class="block text-sm font-medium text-gray-700">Last Donation Date
+                        (Optional)</label>
+                    <input id="last_donation" name="last_donation" type="date"
+                        class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 focus:bg-white transition-colors bg-white/50 text-gray-600">
+                </div>
+
+                <!-- Contact Info -->
+                <div class="space-y-2">
+                    <label for="city" class="block text-sm font-medium text-gray-700">City *</label>
+                    <input id="city" name="city" type="text" required
+                        class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 focus:bg-white transition-colors bg-white/50"
+                        placeholder="Mumbai">
+                </div>
+
+                <div class="space-y-2">
+                    <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number *</label>
+                    <input id="phone" name="phone" type="tel" pattern="[0-9]{10}" required
+                        class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 focus:bg-white transition-colors bg-white/50"
+                        placeholder="10 digit number">
+                    <p class="error-msg text-red-500 text-xs mt-1 hidden" id="phoneError">Valid 10-digit phone is
+                        required</p>
+                </div>
+
+                <div class="col-span-1 md:col-span-2 space-y-2">
+                    <label for="medical_conditions" class="block text-sm font-medium text-gray-700">Pre-existing Medical
+                        Conditions (Optional)</label>
+                    <textarea id="medical_conditions" name="medical_conditions" rows="2"
+                        class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 focus:bg-white transition-colors bg-white/50"
+                        placeholder="Any allergies, current medications, etc."></textarea>
+                </div>
+
+                <!-- Account Setup -->
+                <div class="col-span-1 md:col-span-2 space-y-2">
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email Address *</label>
+                    <input id="email" name="email" type="email" required
+                        class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 focus:bg-white transition-colors bg-white/50"
+                        placeholder="you@example.com">
+                    <p class="error-msg text-red-500 text-xs mt-1 hidden" id="emailError">Valid email is required</p>
+                </div>
+
+                <div class="col-span-1 md:col-span-2 space-y-2 relative">
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password *</label>
+                    <div class="relative">
+                        <input id="password" name="password" type="password" required
+                            class="appearance-none block w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 focus:bg-white transition-colors bg-white/50"
+                            placeholder="Min 8 chars, 1 num, 1 special char">
+                        <button type="button"
+                            class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-crimson-600"
+                            onclick="togglePassword()">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" id="eyeIcon">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Password Strength Meter -->
+                    <div class="mt-2 flex gap-1 h-1 w-full rounded-full overflow-hidden bg-gray-200">
+                        <div id="str-1" class="h-full flex-1 transition-colors"></div>
+                        <div id="str-2" class="h-full flex-1 transition-colors"></div>
+                        <div id="str-3" class="h-full flex-1 transition-colors"></div>
+                    </div>
+                    <p class="text-xs mt-1 text-gray-500 flex justify-between">
+                        <span id="pwd-msg">Password strength</span>
+                        <span class="error-msg text-red-500 hidden font-semibold" id="passwordError">Requirements not
+                            met</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-start mt-6 bg-white/40 p-4 border border-gray-200 rounded-xl">
+                <div class="flex items-center h-5">
+                    <input id="consent" name="consent" type="checkbox" required
+                        class="h-5 w-5 text-crimson-600 focus:ring-crimson-500 border-gray-300 rounded cursor-pointer">
+                </div>
+                <div class="ml-3 text-sm">
+                    <label for="consent" class="font-medium text-gray-700 cursor-pointer">I agree to the Terms &
+                        Conditions *</label>
+                    <p class="text-gray-500 text-xs mt-1">I consent to sharing my contact information with individuals
+                        requesting blood on this platform in emergencies.</p>
+                </div>
+            </div>
+
+            <p class="error-msg text-red-500 text-sm mt-2 hidden text-center" id="formError">Please correct the errors
+                above before submitting.</p>
+
+            <div>
+                <button type="submit"
+                    class="w-full flex justify-center py-4 px-4 border border-transparent rounded-full shadow-lg text-lg font-medium text-white bg-crimson-700 hover:bg-crimson-800 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-crimson-500">
+                    Join LifeFlow Network
+                </button>
+            </div>
+
+            <p class="text-center text-sm text-gray-600 mt-4">
+                Already registered? <a href="{{ url_for('login') }}"
+                    class="font-medium text-crimson-600 hover:text-crimson-500">Sign in here</a>
+            </p>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function togglePassword() {
+        const input = document.getElementById('password');
+        const icon = document.getElementById('eyeIcon');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />';
+        } else {
+            input.type = 'password';
+            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />';
+        }
+    }
+
+    const pwdInput = document.getElementById('password');
+    pwdInput.addEventListener('input', function () {
+        const val = this.value;
+        const msg = document.getElementById('pwd-msg');
+        const s1 = document.getElementById('str-1');
+        const s2 = document.getElementById('str-2');
+        const s3 = document.getElementById('str-3');
+
+        let strength = 0;
+        if (val.length >= 8) strength += 1;
+        if (/[0-9]/.test(val) && /[!@#$%^&*(),.?":{}|<>]/.test(val)) strength += 1;
+        if (val.length >= 12 && /[A-Z]/.test(val)) strength += 1;
+
+        // Reset colors
+        [s1, s2, s3].forEach(el => el.className = 'h-full flex-1 transition-colors bg-gray-200');
+
+        if (val.length === 0) {
+            msg.textContent = 'Password strength';
+            msg.className = 'text-xs mt-1 text-gray-500';
+            return;
+        }
+
+        if (strength >= 1) s1.className = 'h-full flex-1 transition-colors bg-red-400';
+        if (strength >= 2) {
+            s1.className = s2.className = 'h-full flex-1 transition-colors bg-yellow-400';
+        }
+        if (strength === 3) {
+            s1.className = s2.className = s3.className = 'h-full flex-1 transition-colors bg-green-500';
+        }
+
+        const labels = ['Weak', 'Fair', 'Strong'];
+        const colors = ['text-red-500', 'text-yellow-600', 'text-green-600'];
+
+        msg.textContent = labels[Math.max(0, strength - 1)];
+        msg.className = `text-xs mt-1 font-bold ${colors[Math.max(0, strength - 1)]}`;
+    });
+
+    // Client-side validation before submit
+    document.getElementById('registerForm').addEventListener('submit', function (e) {
+        let isValid = true;
+        document.querySelectorAll('.error-msg').forEach(el => el.classList.add('hidden'));
+
+        if (!document.getElementById('name').value.trim()) { isValid = false; document.getElementById('nameError').classList.remove('hidden'); }
+
+        const age = parseInt(document.getElementById('age').value);
+        if (!age || age < 18 || age > 65) { isValid = false; document.getElementById('ageError').classList.remove('hidden'); }
+
+        const phone = document.getElementById('phone').value;
+        if (!/^\d{10}$/.test(phone)) { isValid = false; document.getElementById('phoneError').classList.remove('hidden'); }
+
+        const email = document.getElementById('email').value;
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { isValid = false; document.getElementById('emailError').classList.remove('hidden'); }
+
+        const pwd = document.getElementById('password').value;
+        if (pwd.length < 8 || !/[0-9]/.test(pwd) || !/[!@#$%^&*(),.?":{}|<>]/.test(pwd)) {
+            isValid = false;
+            document.getElementById('passwordError').classList.remove('hidden');
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+            document.getElementById('formError').classList.remove('hidden');
+        }
+    });
+</script>
+{% endblock %}
