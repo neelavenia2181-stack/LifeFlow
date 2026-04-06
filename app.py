@@ -142,7 +142,9 @@ app.jinja_env.globals['csrf_token'] = generate_csrf_token
 def csrf_protect():
     if request.method == "POST":
         token = session.get('_csrf_token', None)
-        if not token or token != request.form.get('_csrf_token'):
+        form_token = request.form.get('_csrf_token')
+        header_token = request.headers.get('X-CSRFToken')
+        if not token or token not in (form_token, header_token):
             abort(403, description="CSRF token validation failed.")
 
 # Ensure session activity is updated
@@ -402,7 +404,91 @@ def dashboard():
             'units': 1
         })
         
-    return render_template('dashboard.html', donor=donor, badges=badges, history=history)
+    is_cooling_down = False
+    if donor.next_eligible:
+        try:
+            next_eligible = datetime.strptime(donor.next_eligible, "%Y-%m-%d")
+            if datetime.now() < next_eligible:
+                is_cooling_down = True
+        except ValueError:
+            pass
+            
+    return render_template('dashboard.html', donor=donor, badges=badges, history=history, is_cooling_down=is_cooling_down)
+
+@app.route('/api/toggle_availability', methods=['POST'])
+@login_required
+def toggle_availability():
+    user_id = session.get('user_id')
+    donor = Donor.query.filter_by(user_id=user_id).first()
+    if not donor:
+        return {"error": "Donor not found"}, 404
+        
+    donor.available = not donor.available
+    db.session.commit()
+    
+    return {"success": True, "available": donor.available}
+
+@app.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    user_id = session.get('user_id')
+    donor = Donor.query.filter_by(user_id=user_id).first()
+
+    if not donor:
+        flash("Donor profile not found.", "error")
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        name = sanitize_input(request.form.get('name'))
+        age = sanitize_input(request.form.get('age'))
+        gender = sanitize_input(request.form.get('gender'))
+        blood_type = sanitize_input(request.form.get('blood_type'))
+        city = sanitize_input(request.form.get('city'))
+        phone = sanitize_input(request.form.get('phone'))
+        last_donation = sanitize_input(request.form.get('last_donation'))
+        medical = sanitize_input(request.form.get('medical_conditions'))
+
+        if not all([name, age, gender, blood_type, city, phone]):
+            flash("All required fields must be filled out.", "error")
+            return redirect(url_for('edit_profile'))
+
+        try:
+            age_int = int(age)
+            if age_int < 18 or age_int > 65:
+                flash("Donor must be between 18 and 65 years old.", "error")
+                return redirect(url_for('edit_profile'))
+        except ValueError:
+            flash("Invalid age format.", "error")
+            return redirect(url_for('edit_profile'))
+
+        # Update donor fields
+        donor.name = name
+        donor.age = age_int
+        donor.gender = gender
+        donor.blood_type = blood_type
+        donor.city = city.title()
+        donor.phone = phone
+        donor.last_donation = last_donation
+        donor.medical_conditions = medical
+
+        # Recalculate availability
+        donor.available = True
+        donor.next_eligible = ""
+        if last_donation:
+            try:
+                last_dt = datetime.strptime(last_donation, "%Y-%m-%d")
+                next_eligible = last_dt + timedelta(days=90)
+                if datetime.now() < next_eligible:
+                    donor.available = False
+                    donor.next_eligible = next_eligible.strftime("%Y-%m-%d")
+            except ValueError:
+                pass
+
+        db.session.commit()
+        flash("Profile updated successfully!", "success")
+        return redirect(url_for('dashboard'))
+
+    return render_template('edit_profile.html', donor=donor)
 
 @app.route('/auth', methods=['GET', 'POST'])
 def login():

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-[80vh] py-12 px-4 sm:px-6 lg:px-8 bg-cream">
+    <div class="max-w-3xl mx-auto">
+
+        <!-- Header -->
+        <div class="flex items-center gap-4 mb-8">
+            <a href="{{ url_for('dashboard') }}"
+                class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:text-crimson-600 hover:border-crimson-200 transition-colors shadow-sm">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </a>
+            <div>
+                <h1 class="text-3xl md:text-4xl font-serif text-ink">Edit Profile</h1>
+                <p class="text-gray-500 text-sm mt-1">Update your donor information below.</p>
+            </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 sm:p-10 relative overflow-hidden">
+            <!-- Decorative background -->
+            <div
+                class="absolute top-0 right-0 w-64 h-64 bg-red-50 rounded-full mix-blend-multiply filter blur-3xl opacity-50 -mr-20 -mt-20">
+            </div>
+
+            <form action="{{ url_for('edit_profile') }}" method="POST" class="space-y-6 relative z-10" novalidate>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- Name -->
+                    <div class="col-span-1 md:col-span-2 space-y-2">
+                        <label for="name" class="block text-sm font-medium text-gray-700">Full Name *</label>
+                        <input id="name" name="name" type="text" required value="{{ donor.name }}"
+                            class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 transition-colors bg-gray-50 focus:bg-white">
+                    </div>
+
+                    <!-- Age -->
+                    <div class="space-y-2">
+                        <label for="age" class="block text-sm font-medium text-gray-700">Age *</label>
+                        <input id="age" name="age" type="number" min="18" max="65" required value="{{ donor.age }}"
+                            class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 transition-colors bg-gray-50 focus:bg-white">
+                    </div>
+
+                    <!-- Gender -->
+                    <div class="space-y-2">
+                        <label for="gender" class="block text-sm font-medium text-gray-700">Gender *</label>
+                        <select id="gender" name="gender" required
+                            class="block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 transition-colors bg-gray-50 focus:bg-white">
+                            <option value="Male" {% if donor.gender=='Male' %}selected{% endif %}>Male</option>
+                            <option value="Female" {% if donor.gender=='Female' %}selected{% endif %}>Female</option>
+                            <option value="Other" {% if donor.gender=='Other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Blood Type -->
+                    <div class="space-y-2">
+                        <label for="blood_type" class="block text-sm font-medium text-gray-700">Blood Type *</label>
+                        <select id="blood_type" name="blood_type" required
+                            class="block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 transition-colors bg-gray-50 focus:bg-white text-crimson-700 font-bold">
+                            {% for bt in ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] %}
+                            <option value="{{ bt }}" {% if donor.blood_type==bt %}selected{% endif %}>{{ bt }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- City -->
+                    <div class="space-y-2">
+                        <label for="city" class="block text-sm font-medium text-gray-700">City *</label>
+                        <input id="city" name="city" type="text" required value="{{ donor.city }}"
+                            class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 transition-colors bg-gray-50 focus:bg-white">
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="space-y-2">
+                        <label for="phone" class="block text-sm font-medium text-gray-700">Phone *</label>
+                        <input id="phone" name="phone" type="tel" required value="{{ donor.phone }}"
+                            class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 transition-colors bg-gray-50 focus:bg-white">
+                    </div>
+
+                    <!-- Last Donation -->
+                    <div class="space-y-2">
+                        <label for="last_donation" class="block text-sm font-medium text-gray-700">Last Donation
+                            Date</label>
+                        <input id="last_donation" name="last_donation" type="date"
+                            value="{{ donor.last_donation or '' }}"
+                            class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 transition-colors bg-gray-50 focus:bg-white">
+                    </div>
+
+                    <!-- Medical Conditions -->
+                    <div class="col-span-1 md:col-span-2 space-y-2">
+                        <label for="medical_conditions" class="block text-sm font-medium text-gray-700">Medical
+                            Conditions
+                            (if any)</label>
+                        <textarea id="medical_conditions" name="medical_conditions" rows="3"
+                            class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-crimson-500 focus:border-crimson-500 transition-colors bg-gray-50 focus:bg-white resize-none"
+                            placeholder="e.g. None, Diabetes, etc.">{{ donor.medical_conditions or '' }}</textarea>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                    <button type="submit"
+                        class="flex-1 flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-md text-lg font-bold text-white bg-crimson-700 hover:bg-crimson-800 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                        Save Changes
+                    </button>
+                    <a href="{{ url_for('dashboard') }}"
+                        class="flex-1 flex justify-center py-4 px-4 border border-gray-300 rounded-xl shadow-sm text-lg font-medium text-gray-700 bg-white hover:bg-gray-50 hover:-translate-y-0.5 transition-all duration-300 text-center">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
